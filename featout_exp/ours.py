@@ -59,12 +59,8 @@ def get_clustered_activations(
 
 
 def gaussian_blur(img, kernel_size):
-    border_value = [0] * img.shape[-1]
-    img = cv2.GaussianBlur(
-        img, kernel_size, 0, borderType=cv2.BORDER_CONSTANT, borderValue=border_value
-    )
+    pass
 
-    return img
 
 
 # bluring function
@@ -140,12 +136,12 @@ def simple_gradient_saliency(net, input_img, label):
 
 def transform_cifar(img):
     """for cifar, we need to transform the images"""
-    return np.transpose((img.cpu().detach().numpy() / 2) + 0.5, (2, 1, 0))
+    return np.transpose((img.cpu().detach().numpy() / 2) + 0.5, (1,2,0))
 
 
 def img_to_npy(img):
     img = img.squeeze().cpu().detach().numpy()
-    img = np.transpose(img, (2, 1, 0))
+    img = np.transpose(img, (1, 2, 0))
     return img
 
 
@@ -322,3 +318,23 @@ def plot_together(
     plt.imshow(get_overlayed_img(blurred_image, new_grads))
     plt.title(f"Model attention AFTER blurring (max at x={max_x}, y={max_y})")
     plt.show()
+
+
+def get_max_activation(gradients, filter_size=3):
+    """
+    Get the coordinates where the activation is maximal
+    Includes smoothing with an all-ones filter of size filter_size
+    """
+    grads_mean = np.mean(gradients, axis=0)
+    # smooth the results to avoid using outlier activation
+    filtered = convolve2d(
+        grads_mean,
+        np.ones((filter_size, filter_size)),
+        mode="same",
+    )
+    # get max of smoothed array
+    max_act = np.argmax(filtered.flatten())
+    # get corresponding x and y coordinates
+    max_x = max_act // grads_mean.shape[1]
+    max_y = max_act % grads_mean.shape[1]
+    return max_x, max_y
