@@ -17,6 +17,7 @@ We then trained a MobileNetV3 Model of pytorch to classify the data. For each im
 This way we make sure that we have a small and for computers dfficult to understand dataset. 
 Analysis of the images as well as the worst and best images classified images can be found in [Analysis](analyze/analyze_worst.ipynb)  and [Bad Pictures](visually_worst.ipynb).
 
+![worst](imgs/first_worst.jpg)
 
 ### Technique
 We made one major change of the technique, which then were improved by two smaller changes. All of the changes build up on eachother and increase the complexity of the FeatOut Algorithm.
@@ -28,10 +29,13 @@ In the basic version we chose three gradient patches and then block a circle of 
 The process of including the filter in the model basically stayed the same, with minor changes due to dimensional shifts.
 All of this is done in the [Featout Main File](MJ_featout_jupyter.ipynb).
 
+
 #### 3 clusters, Blur based on gradient intensity
 The one smaller change was not to zero out the entire blur patch but to actually blur it based on the intensity of the gradient. It depends on the intensity in two ways: the size of the blur is proportional to the intensity of the gradient in the patch but also the rate of the masking, or blurring, is proportional to the intensity. So if we have a high gradient we mask a bigger area around the gradient and the value in the center of the covered area is closer to zero than when we have a low gradient. 
 This is supposed to ensure that it is harder for the model to heavily fixate on one are of the picture rather than taking the "bigger picture" into account and diversifying the features. 
 
+![dsa](imgs/3_Clusters_StaticBlur_ex1.jpg)
+![dsa](imgs/3_Clusters_StaticBlur_ex2.jpg)
 #### Time-variant Numbers of clusters, Static Blur
 The second smaller change was to make the size of the gradient patch clusters dependent on the epoch one was currently training in. The higher the epoch the more clusters would be blurred. This is implemented in a linear fashion to keep things simple. Increasing the number of clusters ensures that as, usually, the model gets more and more confident and takes less new features into account with this method it is forced to "reconsider" the used features. On a longer run this should ensure that the models taks various features into account.
 
@@ -46,3 +50,5 @@ The second one uses the algorithm provided by Nina.
 The third one uses the algorithm designed by us, with the cluster size increasing with time and the blur being based on gradient intensity. Due to the fact that training takes a lot of time we were unable to test all the new features of the algorithm seperately.
 
 A comparison of all results can be found in the file [Results](analysis.ipynb).
+
+![imgs](imgs/results.jpg)
