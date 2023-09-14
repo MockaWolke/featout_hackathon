@@ -82,7 +82,7 @@ class Featout(torch.utils.data.Dataset):
     """
 
     def __init__(
-        self, dataset, plotting_path,do_plotting = False, *args, **kwargs
+        self, dataset, plotting_path,do_plotting = False, device = "cuda", *args, **kwargs
     ):
         """
         Args:
@@ -95,6 +95,7 @@ class Featout(torch.utils.data.Dataset):
         # set path where to save plots (set to None if no plotting desired)
         self.plotting = plotting_path
         self.do_plotting = do_plotting
+        self.device = device
 
     def __len__(self):
         return len(self.dataset)
@@ -113,6 +114,8 @@ class Featout(torch.utils.data.Dataset):
             
             in_img = torch.unsqueeze(image, 0)
 
+            in_img = in_img.to(self.device)
+
             # run a prediction with the given model --> TODO: this can be done
             # more efficiently by passing the predicted labels from the
             # preceding epoch to this class
@@ -124,7 +127,7 @@ class Featout(torch.utils.data.Dataset):
                 # get model attention via gradient based method
                 gradients = self.algorithm(
                     self.featout_model, in_img, label
-                )[0].numpy()
+                ).detach().cpu()[0].numpy()
                 # Compute point of maximum activation
                 max_x, max_y = get_max_activation(gradients)
 
