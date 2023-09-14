@@ -66,7 +66,6 @@ def transform_cifar(img):
 def img_to_npy(img):
     img =  img.squeeze().cpu().detach().numpy()
     img = np.transpose(img, (2,1,0))
-    print( img.shape)
     return img
 
 
