@@ -1,5 +1,7 @@
 # IICCSSS Hackathon
 
+![stg](imgs/porter.png)
+
 ## Stop FREAKOUT instad FEATOUT
 In optimizing we mainly focused on the Dataset and some of the techniques the algorithm used. Of these techniques we primarily focused on the way the maximum gradients were chosen and how the area around the maximum gradients was blurred out. Other aspects of the algorithm, such as chosing how often the FeatOut actually takes place or other methods to derive the models attention, were not considered in this analysis.
 We settled for these changes of the technique as we hoped precisely taking out out the most relevant features in each epoch would force the model to consider all aspects of the given image, witout blurring to much of the image and therefore potentially making it impossbile for the model to derive any features at all. The sophisticated modifications we made to the technique in later steps enable to strike the balance between exactly blurring the main features of interests while still enabling the model to freely consider new emerging features.
@@ -13,7 +15,7 @@ The data is then loaded [here](load_data.ipynb).
 
 We then trained a MobileNetV3 Model of pytorch to classify the data. For each image in the test dataset we obtained a loss value to be able to rank the images. We took the images with the highest loss to build our own dataset, as these images were the images the "usual" model would fail to predict correctly. The training and savin of the data can be retraced with the files in the [Collab](collab_notebooks) folder.
 This way we make sure that we have a small and for computers dfficult to understand dataset. 
-Analysis of the images as well as the worst and best images classified images can be found in [Analysis](analyse_worst.ipynb)  and [Bad Pictures](visually_worst.ipynb).
+Analysis of the images as well as the worst and best images classified images can be found in [Analysis](analyze/analyze_worst.ipynb)  and [Bad Pictures](visually_worst.ipynb).
 
 
 ### Technique
