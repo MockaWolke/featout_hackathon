@@ -108,14 +108,19 @@ class Featout(torch.utils.data.Dataset):
         # call method from base dataset
         image, label = self.dataset.__getitem__(index)
         
+        original_device = image.device
         # image shape [3, 254,245 ]
         # print("Curretn image shape",image.shape)
         if self.featout:
+            
+            
+            print("first", image.device, label.device)
             
             in_img = torch.unsqueeze(image, 0)
 
             in_img = in_img.to(self.device)
             gpu_label = label.to(self.device)
+            print("second", in_img.device, gpu_label.device)
             
             # run a prediction with the given model --> TODO: this can be done
             # more efficiently by passing the predicted labels from the
@@ -124,11 +129,14 @@ class Featout(torch.utils.data.Dataset):
                 self.featout_model(in_img).data, 1
             )
             # only do featout if it was predicted correctly
-            if predicted_lab == label:
+            if predicted_lab.to(label.device) == label:
                 # get model attention via gradient based method
+                
+                
                 gradients = self.algorithm(
                     self.featout_model, in_img, gpu_label
                 ).detach().cpu()[0].numpy()
+                print("3")
                 # Compute point of maximum activation
                 max_x, max_y = get_max_activation(gradients)
 
@@ -152,7 +160,7 @@ class Featout(torch.utils.data.Dataset):
 
                 image = blurred_image[0]
 
-        return image, label
+        return image.to(original_device), label.to(original_device)
 
     def start_featout(
         self,
