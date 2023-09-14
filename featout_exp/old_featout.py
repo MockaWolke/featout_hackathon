@@ -82,7 +82,7 @@ class Featout(torch.utils.data.Dataset):
     """
 
     def __init__(
-        self, dataset, plotting_path,do_plotting = False, *args, **kwargs
+        self, dataset, plotting_path,do_plotting = False, device = "cuda", *args, **kwargs
     ):
         """
         Args:
@@ -95,6 +95,7 @@ class Featout(torch.utils.data.Dataset):
         # set path where to save plots (set to None if no plotting desired)
         self.plotting = plotting_path
         self.do_plotting = do_plotting
+        self.device = device
 
     def __len__(self):
         return len(self.dataset)
@@ -105,26 +106,44 @@ class Featout(torch.utils.data.Dataset):
         and return the modified image
         """
         # call method from base dataset
-        image, label = self.dataset.__getitem__(index)
+        image, og_label = self.dataset.__getitem__(index)
         
+        original_device = image.device
         # image shape [3, 254,245 ]
         # print("Curretn image shape",image.shape)
+        
+        # print(type(image), type(og_label))
+        
+        
         if self.featout:
+            
+            label = torch.Tensor([og_label]).long()
+            
+            # print("first", image.device, label.device)
             
             in_img = torch.unsqueeze(image, 0)
 
+            in_img = in_img.to(self.device)
+            gpu_label = label.to(self.device)
+            # print("second", in_img.device, gpu_label.device, gpu_label)
+            
             # run a prediction with the given model --> TODO: this can be done
             # more efficiently by passing the predicted labels from the
             # preceding epoch to this class
             _, predicted_lab = torch.max(
                 self.featout_model(in_img).data, 1
             )
+            
+            # print(predicted_lab)
             # only do featout if it was predicted correctly
-            if predicted_lab == label:
+            if (predicted_lab.to(label.device).squeeze() == label).all():
                 # get model attention via gradient based method
+                
+                
                 gradients = self.algorithm(
-                    self.featout_model, in_img, label
-                )[0].numpy()
+                    self.featout_model, in_img, gpu_label
+                ).detach().cpu()[0].numpy()
+                # print("3")
                 # Compute point of maximum activation
                 max_x, max_y = get_max_activation(gradients)
 
@@ -147,8 +166,9 @@ class Featout(torch.utils.data.Dataset):
                     )
 
                 image = blurred_image[0]
+     
 
-        return image, label
+        return image.to(original_device), torch.tensor(og_label)
 
     def start_featout(
         self,
