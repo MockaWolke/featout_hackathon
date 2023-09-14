@@ -115,7 +115,8 @@ class Featout(torch.utils.data.Dataset):
             in_img = torch.unsqueeze(image, 0)
 
             in_img = in_img.to(self.device)
-
+            gpu_label = label.to(self.device)
+            
             # run a prediction with the given model --> TODO: this can be done
             # more efficiently by passing the predicted labels from the
             # preceding epoch to this class
@@ -126,7 +127,7 @@ class Featout(torch.utils.data.Dataset):
             if predicted_lab == label:
                 # get model attention via gradient based method
                 gradients = self.algorithm(
-                    self.featout_model, in_img, label
+                    self.featout_model, in_img, gpu_label
                 ).detach().cpu()[0].numpy()
                 # Compute point of maximum activation
                 max_x, max_y = get_max_activation(gradients)
