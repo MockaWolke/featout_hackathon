@@ -103,7 +103,7 @@ def blur_featurs(
         # modified_img[:,:,y,x] = 0
 
         blur_region = shape_selector(modified_img.shape[2:], center, radius)
-        modified_img[:, :, blur_region[0], blur_region[1]] = 0
+        modified_img[:, :, blur_region[0], blur_region[1], ] = 0
 
         # print(
         #     f"###### radius : {radius} , max radius : {max_radius} , grad : {grad_normalized[center[0],center[1]]} ######"
