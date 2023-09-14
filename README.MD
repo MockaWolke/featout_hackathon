@@ -1,5 +1,10 @@
 # IICCSSS Hackathon
 
+Hey (;
+
+We just quickly updated the readme and the images. We hope that's okay. If not just, just choose an earlier commit.
+
+
 ![stg](imgs/porter.png)
 
 ## Stop FREAKOUT instad FEATOUT
@@ -17,7 +22,14 @@ We then trained a MobileNetV3 Model of pytorch to classify the data. For each im
 This way we make sure that we have a small and for computers dfficult to understand dataset. 
 Analysis of the images as well as the worst and best images classified images can be found in [Analysis](analyze/analyze_worst.ipynb)  and [Bad Pictures](visually_worst.ipynb).
 
+
+The worst images:
 ![worst](imgs/first_worst.jpg)
+
+The best images:
+![best](imgs/first_best.jpg)
+
+You can notice a stellar dataset quality (:
 
 ### Technique
 We made one major change of the technique, which then were improved by two smaller changes. All of the changes build up on eachother and increase the complexity of the FeatOut Algorithm.
@@ -50,5 +62,10 @@ The second one uses the algorithm provided by Nina.
 The third one uses the algorithm designed by us, with the cluster size increasing with time and the blur being based on gradient intensity. Due to the fact that training takes a lot of time we were unable to test all the new features of the algorithm seperately.
 
 A comparison of all results can be found in the file [Results](analysis.ipynb).
+
+Here the Control model is not applying any augmentatation.
+The Standard is using Ninas approach and the Stronger our.
+As you can see FEATOUT did not aprove the performance ): But we were clearly able to procude a very hard test dataset, with perhabs to bad image quality afterall.
+
 
 ![imgs](imgs/results.jpg)
