@@ -60,13 +60,12 @@ def zero_out(img, max_coordinates, patch_radius=4):
 def transform_cifar(img):
     """for cifar, we need to transform the images"""
     return np.transpose(
-        (img.cpu().detach().numpy() / 2) + 0.5, (2, 1, 0)
+        (img.cpu().detach().numpy() / 2) + 0.5, (1, 2, 0)
     )
 
 def img_to_npy(img):
     img =  img.squeeze().cpu().detach().numpy()
-    img = np.transpose(img, (2,1,0))
-    print( img.shape)
+    img = np.transpose(img, (1, 2, 0))
     return img
 
 
