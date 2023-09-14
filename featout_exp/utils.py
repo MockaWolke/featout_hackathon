@@ -64,3 +64,15 @@ def load_data(kind, batchsize, shuffle):
     
     return loader
         
+        
+def load_data_raw_dataset(kind):
+    
+    assert kind in ["train", "test"]
+        
+    path = Path(__file__).parent.parent / f"csvs/{kind}.csv"
+    
+    df = pd.read_csv(str(path), index_col= 0)
+            
+    dataset = CustomDataset(dataframe=df)
+
+    return dataset
