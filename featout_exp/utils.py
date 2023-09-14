@@ -4,7 +4,9 @@ from PIL import Image
 import torch.nn as nn
 from torchvision.models import mobilenet_v3_small
 from featout_exp import IMAGESIZE
-
+from pathlib import Path
+from torch.utils.data import DataLoader
+import pandas as pd
 
 transformations = transforms.Compose([
     transforms.Resize(IMAGESIZE),
@@ -48,3 +50,17 @@ def load_model(device = "cuda"):
     return model
 
 
+def load_data(kind, batchsize, shuffle):
+    
+    assert kind in ["train", "test"]
+        
+    path = Path(__file__).parent.parent / f"csvs/{kind}.csv"
+    
+    df = pd.read_csv(str(path), index_col= 0)
+            
+    dataset = CustomDataset(dataframe=df)
+
+    loader = DataLoader(dataset, batch_size=batchsize, shuffle= shuffle)
+    
+    return loader
+        
